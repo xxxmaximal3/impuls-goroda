@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Импульс Города</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Mulish:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#07060f;--bg2:#0d0b1a;--bg3:#110f22;
+  --av:#a259ff;--ab:#4f8fff;--am:#7b6dff;
+  --tx:#f0eeff;--tm:#9b96c0;--td:#5c567a;
+  --gb:rgba(255,255,255,0.045);--gbr:rgba(162,89,255,0.18);
+  --nav-h:72px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Mulish',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");background-size:256px;pointer-events:none;}
+
+/* ORBS */
+.orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:orb-drift 12s ease-in-out infinite alternate;}
+.orb1{width:520px;height:520px;top:-140px;left:-100px;background:radial-gradient(circle,rgba(162,89,255,.22)0%,transparent 70%);animation-duration:14s;}
+.orb2{width:460px;height:460px;top:80px;right:-120px;background:radial-gradient(circle,rgba(79,143,255,.18)0%,transparent 70%);animation-duration:11s;animation-delay:-5s;}
+.orb3{width:300px;height:300px;bottom:100px;left:30%;background:radial-gradient(circle,rgba(123,109,255,.14)0%,transparent 70%);animation-duration:16s;animation-delay:-3s;}
+@keyframes orb-drift{from{transform:translate(0,0)scale(1);}to{transform:translate(30px,20px)scale(1.08);}}
+
+/* HEADER */
+header{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:flex;align-items:center;padding:0 48px;background:rgba(7,6,15,.55);backdrop-filter:blur(22px)saturate(160%);-webkit-backdrop-filter:blur(22px)saturate(160%);border-bottom:1px solid rgba(162,89,255,.1);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0;cursor:pointer;}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(162,89,255,.28),rgba(79,143,255,.18));border:1px solid rgba(162,89,255,.35);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.06)inset,0 8px 24px rgba(162,89,255,.25);}
+.logo-icon::before{content:'';position:absolute;top:-30%;left:-20%;width:60%;height:50%;background:rgba(255,255,255,.12);border-radius:50%;filter:blur(4px);transform:rotate(-20deg);}
+.logo-icon svg{position:relative;z-index:1;}
+.logo-text{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;line-height:1.2;color:var(--tx);}
+.logo-text span{display:block;font-weight:400;font-size:10px;letter-spacing:.12em;color:var(--tm);text-transform:uppercase;}
+nav{display:flex;align-items:center;gap:6px;margin:0 auto;}
+nav a{font-size:13px;font-weight:400;letter-spacing:.02em;color:var(--tm);text-decoration:none;padding:8px 16px;border-radius:50px;transition:color .25s,background .25s;position:relative;cursor:pointer;}
+nav a:hover{color:var(--tx);background:rgba(162,89,255,.1);}
+nav a.active{color:var(--tx);}
+nav a.active::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--av);box-shadow:0 0 6px var(--av);}
+.nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+/* BUTTONS */
+.btn-glass{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:50px;font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;letter-spacing:.03em;cursor:pointer;text-decoration:none;position:relative;overflow:hidden;border:1px solid var(--gbr);background:var(--gb);backdrop-filter:blur(16px)saturate(180%);-webkit-backdrop-filter:blur(16px)saturate(180%);color:var(--tm);box-shadow:0 0 0 1px rgba(255,255,255,.05)inset;transition:color .25s,border-color .25s,box-shadow .25s;}
+.btn-glass::before{content:'';position:absolute;top:0;left:-10%;width:40%;height:50%;background:rgba(255,255,255,.08);border-radius:50%;filter:blur(6px);pointer-events:none;}
+.btn-glass:hover{color:var(--tx);border-color:rgba(162,89,255,.4);box-shadow:0 0 20px rgba(162,89,255,.18),0 0 0 1px rgba(255,255,255,.08)inset;}
+.btn-primary{background:linear-gradient(135deg,rgba(162,89,255,.55),rgba(79,143,255,.45));border-color:rgba(162,89,255,.5);color:var(--tx);box-shadow:0 0 24px rgba(162,89,255,.28),0 0 0 1px rgba(255,255,255,.1)inset;}
+.btn-primary:hover{background:linear-gradient(135deg,rgba(162,89,255,.7),rgba(79,143,255,.6));box-shadow:0 0 36px rgba(162,89,255,.42),0 0 0 1px rgba(255,255,255,.14)inset;color:#fff;}
+
+/* PAGES */
+.page{display:none;min-height:100vh;position:relative;padding-top:var(--nav-h);}
+.page.active{display:block;}
+
+/* PAGE HERO */
+.page-hero{position:relative;padding:80px 80px 60px;overflow:hidden;border-bottom:1px solid rgba(162,89,255,.1);}
+.page-hero-grid{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(162,89,255,.04)1px,transparent 1px),linear-gradient(90deg,rgba(162,89,255,.04)1px,transparent 1px);background-size:60px 60px;mask-image:linear-gradient(to bottom,black 0%,transparent 100%);}
+.pho{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
+.pho1{width:400px;height:400px;top:-150px;right:-80px;background:radial-gradient(circle,rgba(162,89,255,.2)0%,transparent 70%);}
+.pho2{width:300px;height:300px;bottom:-100px;left:10%;background:radial-gradient(circle,rgba(79,143,255,.15)0%,transparent 70%);}
+.phc{position:relative;z-index:1;max-width:700px;}
+.pg-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 16px;border-radius:50px;background:rgba(162,89,255,.1);border:1px solid rgba(162,89,255,.22);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--av);margin-bottom:20px;}
+.bd{width:6px;height:6px;border-radius:50%;background:var(--av);box-shadow:0 0 8px var(--av);animation:pls 2s ease-in-out infinite;}
+@keyframes pls{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.7);}}
+.pg-title{font-family:'Unbounded',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:900;line-height:1.1;color:#fff;margin-bottom:16px;}
+.pg-title .gr{background:linear-gradient(90deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.pg-desc{font-size:17px;font-weight:300;line-height:1.75;color:var(--tm);max-width:560px;}
+
+/* SECTION BODY */
+.sb{padding:64px 80px;}
+
+/* CARDS */
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.card{border-radius:20px;padding:28px;background:rgba(255,255,255,.03);border:1px solid rgba(162,89,255,.13);backdrop-filter:blur(10px);position:relative;transition:border-color .3s,box-shadow .3s,transform .3s;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(162,89,255,.4),transparent);pointer-events:none;}
+.card:hover{border-color:rgba(162,89,255,.3);box-shadow:0 8px 40px rgba(162,89,255,.12);transform:translateY(-3px);}
+.ci{width:48px;height:48px;border-radius:14px;margin-bottom:18px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(162,89,255,.25),rgba(79,143,255,.15));border:1px solid rgba(162,89,255,.28);position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.07)inset,0 4px 16px rgba(162,89,255,.2);}
+.ci::before{content:'';position:absolute;top:-25%;left:-15%;width:55%;height:45%;background:rgba(255,255,255,.15);border-radius:50%;filter:blur(4px);}
+.ci svg{position:relative;z-index:1;}
+.ct{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--av);margin-bottom:8px;}
+.card h3{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:600;color:#fff;margin-bottom:10px;line-height:1.3;}
+.card p{font-size:14px;color:var(--tm);line-height:1.7;}
+.cf{margin-top:20px;display:flex;align-items:center;justify-content:space-between;}
+.cd{font-size:12px;color:var(--td);}
+.cb{font-size:12px;font-weight:600;color:var(--av);text-decoration:none;display:flex;align-items:center;gap:5px;transition:gap .2s;}
+.cb:hover{gap:9px;}
+
+/* DIVIDER */
+.div{height:1px;background:linear-gradient(90deg,transparent,rgba(162,89,255,.2),transparent);margin:0 80px;}
+
+/* ABOUT */
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
+.av-box{border-radius:24px;overflow:hidden;aspect-ratio:4/3;background:linear-gradient(135deg,rgba(162,89,255,.12),rgba(79,143,255,.08));border:1px solid rgba(162,89,255,.18);display:flex;align-items:center;justify-content:center;position:relative;}
+.av-inner{text-align:center;}
+.av-num{font-family:'Unbounded',sans-serif;font-size:80px;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.av-lbl{font-size:14px;color:var(--tm);margin-top:8px;letter-spacing:.06em;}
+.av-orb{position:absolute;width:200px;height:200px;border-radius:50%;top:-60px;right:-60px;background:radial-gradient(circle,rgba(162,89,255,.18)0%,transparent 70%);filter:blur(40px);}
+.at h2{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:700;color:#fff;margin-bottom:20px;line-height:1.25;}
+.at h2 span{background:linear-gradient(90deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.at p{font-size:15px;line-height:1.8;color:var(--tm);margin-bottom:16px;}
+.vl{margin-top:32px;display:flex;flex-direction:column;gap:14px;}
+.vi{display:flex;gap:14px;align-items:flex-start;}
+.vd{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--av),var(--ab));margin-top:6px;flex-shrink:0;box-shadow:0 0 10px rgba(162,89,255,.5);}
+.vi h4{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:2px;}
+.vi p{font-size:13px;color:var(--tm);line-height:1.6;margin:0;}
+
+.tg{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px;}
+.tc{border-radius:20px;padding:28px 24px;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(162,89,255,.12);transition:border-color .3s,transform .3s;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.tc:hover{border-color:rgba(162,89,255,.28);transform:translateY(-3px);}
+.ta{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:#fff;position:relative;flex-shrink:0;}
+.ta::before{content:'';position:absolute;inset:-2px;border-radius:50%;background:linear-gradient(135deg,var(--av),var(--ab));z-index:-1;}
+.tc h4{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:5px;}
+.tc span{font-size:12px;color:var(--tm);}
+.tc .ta {margin-bottom: 13px;}
+
+/* STATS ROW */
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:48px;}
+.sm{padding:20px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(162,89,255,.12);text-align:center;}
+.sn{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:700;background:linear-gradient(135deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
+.sl{font-size:12px;color:var(--tm);}
+
+/* PARTNERS */
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.pc{border-radius:16px;padding:28px 20px;background:rgba(255,255,255,.03);border:1px solid rgba(162,89,255,.1);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;min-height:120px;transition:border-color .3s,box-shadow .3s;position:relative;overflow:hidden;}
+.pc:hover{border-color:rgba(162,89,255,.28);box-shadow:0 4px 24px rgba(162,89,255,.1);}
+.plw{width:52px;height:52px;border-radius:14px;background:rgba(162,89,255,.12);border:1px solid rgba(162,89,255,.22);display:flex;align-items:center;justify-content:center;}
+.pn{font-size:13px;font-weight:600;color:var(--tx);}
+.pt{font-size:11px;color:var(--td);margin-top:2px;}
+.pcta{margin-top:48px;padding:40px;border-radius:20px;background:linear-gradient(135deg,rgba(162,89,255,.08),rgba(79,143,255,.05));border:1px solid rgba(162,89,255,.18);text-align:center;}
+.pcta h3{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:10px;}
+.pcta p{font-size:15px;color:var(--tm);margin-bottom:24px;}
+
+/* EVENTS */
+.el{display:flex;flex-direction:column;gap:16px;}
+.ec{border-radius:20px;padding:28px 32px;background:rgba(255,255,255,.03);border:1px solid rgba(162,89,255,.12);display:grid;grid-template-columns:80px 1fr auto;gap:24px;align-items:center;transition:border-color .3s,transform .25s;}
+.ec:hover{border-color:rgba(162,89,255,.28);transform:translateX(4px);}
+.ed{text-align:center;padding:12px;background:rgba(162,89,255,.1);border-radius:14px;border:1px solid rgba(162,89,255,.2);}
+.eday{font-family:'Unbounded',sans-serif;font-size:26px;font-weight:900;background:linear-gradient(135deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.emon{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tm);margin-top:4px;}
+.ei h3{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:6px;}
+.ei p{font-size:13px;color:var(--tm);line-height:1.6;}
+.em{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.etag{font-size:11px;font-weight:600;padding:4px 12px;border-radius:50px;background:rgba(162,89,255,.1);border:1px solid rgba(162,89,255,.2);color:var(--av);}
+.etag.b{background:rgba(79,143,255,.1);border-color:rgba(79,143,255,.2);color:var(--ab);}
+.ea{flex-shrink:0;}
+
+/* FILTER BAR */
+.fb{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;}
+.fbt{padding:8px 20px;border-radius:50px;font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:1px solid rgba(162,89,255,.18);background:transparent;color:var(--tm);transition:all .2s;}
+.fbt:hover,.fbt.active{background:rgba(162,89,255,.15);border-color:rgba(162,89,255,.4);color:var(--tx);}
+.fbt.active{color:var(--av);}
+
+/* MAIN HERO */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--nav-h) + 60px)48px 100px;text-align:center;overflow:hidden;}
+.hg{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(162,89,255,.055)1px,transparent 1px),linear-gradient(90deg,rgba(162,89,255,.055)1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,black 30%,transparent 80%);}
+.harc{position:absolute;z-index:0;border-radius:50%;border:1px solid rgba(162,89,255,.08);pointer-events:none;}
+.a1{width:700px;height:700px;top:50%;left:50%;transform:translate(-50%,-50%);}
+.a2{width:900px;height:900px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(79,143,255,.05);}
+.a3{width:1100px;height:1100px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(162,89,255,.04);}
+.hc{position:relative;z-index:2;max-width:1100px;width:100%;}
+.hbg{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:50px;background:rgba(162,89,255,.1);border:1px solid rgba(162,89,255,.25);backdrop-filter:blur(10px);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--av);margin-bottom:32px;animation:fu .8s ease both;}
+.ht{font-family:'Unbounded',sans-serif;font-size:clamp(40px,5.5vw,72px);font-weight:900;line-height:1.07;letter-spacing:-.02em;color:#fff;margin-bottom:28px;animation:fu .8s .15s ease both;}
+.ht .la{display:block;background:linear-gradient(90deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hs{font-size:20px;font-weight:300;line-height:1.75;color:var(--tm);max-width:660px;margin:0 auto 44px;animation:fu .8s .28s ease both;}
+.hs strong{color:var(--tx);font-weight:600;}
+.hcta{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:80px;animation:fu .8s .4s ease both;}
+.hst{display:flex;align-items:stretch;justify-content:center;animation:fu .8s .55s ease both;}
+.sw{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);border-radius:16px;overflow:hidden;border:1px solid rgba(162,89,255,.12);}
+.sc{padding:22px 40px;text-align:center;flex:1;position:relative;}
+.sc+.sc::before{content:'';position:absolute;left:0;top:16px;bottom:16px;width:1px;background:rgba(162,89,255,.15);}
+.snum{font-family:'Unbounded',sans-serif;font-size:32px;font-weight:700;line-height:1;background:linear-gradient(135deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+.slbl{font-size:12px;font-weight:400;color:var(--tm);letter-spacing:.04em;}
+.sh{position:absolute;bottom:36px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--td);font-size:11px;letter-spacing:.1em;text-transform:uppercase;animation:fu 1s .9s ease both;}
+.sl2{width:1px;height:40px;background:linear-gradient(to bottom,var(--av),transparent);animation:sla 2s ease-in-out infinite;}
+@keyframes sla{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}50.01%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+@keyframes fu{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* FOOTER */
+footer{padding:40px 80px;border-top:1px solid rgba(162,89,255,.1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;margin-top:40px;}
+.fl{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:var(--tm);}
+footer p{font-size:12px;color:var(--td);}
+footer nav{gap:20px;}
+footer nav a{font-size:12px;padding:4px 0;}
+
+/* POPUP */
+.pop-ov{position:fixed;inset:0;z-index:200;background:rgba(7,6,15,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:24px;}
+.pop{width:100%;max-width:460px;background:rgba(17,15,34,.92);border:1px solid rgba(162,89,255,.25);border-radius:24px;padding:40px 36px 36px;position:relative;box-shadow:0 0 0 1px rgba(255,255,255,.05)inset,0 24px 80px rgba(0,0,0,.6),0 0 60px rgba(162,89,255,.12);}
+.pop-x{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(162,89,255,.2);background:rgba(255,255,255,.05);color:var(--tm);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;transition:background .2s,color .2s;}
+.pop-x:hover{background:rgba(162,89,255,.15);color:var(--tx);}
+.pop-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:50px;background:rgba(162,89,255,.1);border:1px solid rgba(162,89,255,.22);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--av);margin-bottom:18px;}
+.pop h2{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;line-height:1.25;color:#fff;margin-bottom:8px;}
+.pop-sub{font-size:14px;color:var(--tm);margin-bottom:28px;line-height:1.6;}
+.fg{margin-bottom:16px;}
+.fg label{display:block;font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--tm);text-transform:uppercase;margin-bottom:8px;}
+.fi{width:100%;padding:13px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(162,89,255,.18);border-radius:12px;color:var(--tx);font-family:'Mulish',sans-serif;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s;}
+.fi::placeholder{color:var(--td);}
+.fi:focus{border-color:rgba(162,89,255,.5);box-shadow:0 0 0 3px rgba(162,89,255,.1);}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fs{width:100%;padding:13px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(162,89,255,.18);border-radius:12px;color:var(--tx);font-family:'Mulish',sans-serif;font-size:14px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 7L11 1' stroke='%239b96c0' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+.fs option{background:#110f22;}
+.psub-btn{width:100%;margin-top:24px;padding:15px;border-radius:12px;border:1px solid rgba(162,89,255,.5);background:linear-gradient(135deg,rgba(162,89,255,.55),rgba(79,143,255,.45));backdrop-filter:blur(12px);color:#fff;font-family:'Mulish',sans-serif;font-size:15px;font-weight:600;letter-spacing:.02em;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 0 24px rgba(162,89,255,.28),0 0 0 1px rgba(255,255,255,.1)inset;transition:box-shadow .25s,transform .15s;}
+.psub-btn::before{content:'';position:absolute;top:0;left:-10%;width:40%;height:50%;background:rgba(255,255,255,.12);border-radius:50%;filter:blur(6px);}
+.psub-btn:hover{box-shadow:0 0 40px rgba(162,89,255,.45),0 0 0 1px rgba(255,255,255,.14)inset;transform:translateY(-1px);}
+.pnote{text-align:center;margin-top:14px;font-size:12px;color:var(--td);}
+.psuc{display:none;text-align:center;padding:20px 0 10px;}
+.sico{width:64px;height:64px;border-radius:50%;margin:0 auto 20px;background:linear-gradient(135deg,rgba(162,89,255,.3),rgba(79,143,255,.2));border:1px solid rgba(162,89,255,.3);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(162,89,255,.25);}
+.psuc h3{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:10px;}
+.psuc p{font-size:14px;color:var(--tm);line-height:1.6;}
+
+@media(max-width:1100px){
+  .cg{grid-template-columns:repeat(2,1fr);}
+  .tg{grid-template-columns:repeat(2,1fr);}
+  .pg{grid-template-columns:repeat(2,1fr);}
+  [style*="repeat(3,1fr)"]{grid-template-columns:repeat(2,1fr)!important;}
+  /* odd last card stretches full width */
+  .cg>.card:last-child:nth-child(odd){grid-column:1/-1;}
+  .tg>.tc:last-child:nth-child(odd){grid-column:1/-1;}
+  .pg>.pc:last-child:nth-child(odd){grid-column:1/-1;}
+  [style*="repeat(3,1fr)"]>*:last-child:nth-child(odd){grid-column:1/-1!important;}
+  [style*="repeat(2,1fr)"]>*:last-child:nth-child(odd){grid-column:1/-1!important;}
+  #blog-grid>.blog-card:last-child:nth-child(odd){grid-column:1/-1;}
+}
+@media(max-width:768px){
+  header{padding:0 20px;}
+  nav{display:none;}
+  .ag{grid-template-columns:1fr;}
+  .sr{grid-template-columns:1fr 1fr;}
+  .ec{grid-template-columns:1fr;}
+  .sb{padding:40px 24px;}
+  .page-hero{padding:40px 24px;}
+  footer{padding:32px 24px;flex-direction:column;}
+  .cg{grid-template-columns:1fr;}
+  .tg{grid-template-columns:1fr;}
+  .pg{grid-template-columns:1fr;}
+  [style*="repeat(3,1fr)"]{grid-template-columns:1fr!important;}
+  [style*="repeat(4,1fr)"]{grid-template-columns:1fr!important;}
+  [style*="repeat(2,1fr)"]{grid-template-columns:1fr!important;}
+  .card.blog-card[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;}
+  /* odd-card rule not needed at 1col — reset */
+  .cg>.card:last-child:nth-child(odd){grid-column:auto;}
+  /* sw stats: 2×2 grid on mobile */
+  .sw{border-radius:12px;}
+  .hst{display:grid!important;grid-template-columns:1fr 1fr;align-items:stretch;}
+  .sc{padding:20px 16px;}
+  .sc+.sc::before{top:12px;bottom:12px;}
+  .sc:nth-child(1),.sc:nth-child(2){border-bottom:1px solid rgba(162,89,255,.15);}
+  .sc:nth-child(3)::before,.sc:nth-child(4)::before{top:12px;bottom:12px;}
+  .snum{font-size:22px;}
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <a class="nav-logo" onclick="showPage('home')">
+    <div class="logo-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <circle cx="11" cy="11" r="4.5" fill="url(#lg1)"/>
+        <path d="M11 2C6 2 2 6 2 11" stroke="url(#ls1)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M11 20C16 20 20 16 20 11" stroke="url(#ls2)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M2 11C2 16 6 20 11 20" stroke="rgba(255,255,255,.2)" stroke-width="1" stroke-linecap="round"/>
+        <defs>
+          <radialGradient id="lg1" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#4f8fff"/></radialGradient>
+          <linearGradient id="ls1" x1="2" y1="2" x2="11" y2="11" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#7b6dff"/></linearGradient>
+          <linearGradient id="ls2" x1="11" y1="11" x2="20" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#7b6dff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="logo-text">ИМПУЛЬС ГОРОДА<span>образование · развитие</span></div>
+  </a>
+  <nav id="mn">
+    <button data-p="home" class="active" onclick="showPage('home')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:13px;font-weight:400;letter-spacing:.02em;color:var(--tm);padding:8px 16px;border-radius:50px;cursor:pointer;transition:color .25s,background .25s;position:relative;">Главная</button>
+    <button data-p="programs" onclick="showPage('programs')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:13px;font-weight:400;letter-spacing:.02em;color:var(--tm);padding:8px 16px;border-radius:50px;cursor:pointer;transition:color .25s,background .25s;position:relative;">Программы</button>
+    <button data-p="about" onclick="showPage('about')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:13px;font-weight:400;letter-spacing:.02em;color:var(--tm);padding:8px 16px;border-radius:50px;cursor:pointer;transition:color .25s,background .25s;position:relative;">О нас</button>
+    <button data-p="partners" onclick="showPage('partners')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:13px;font-weight:400;letter-spacing:.02em;color:var(--tm);padding:8px 16px;border-radius:50px;cursor:pointer;transition:color .25s,background .25s;position:relative;">Партнёры</button>
+    <button data-p="events" onclick="showPage('events')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:13px;font-weight:400;letter-spacing:.02em;color:var(--tm);padding:8px 16px;border-radius:50px;cursor:pointer;transition:color .25s,background .25s;position:relative;">События</button>
+    <button data-p="blog" onclick="showPage('blog')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:13px;font-weight:400;letter-spacing:.02em;color:var(--tm);padding:8px 16px;border-radius:50px;cursor:pointer;transition:color .25s,background .25s;position:relative;">Блог</button>
+  </nav>
+  <div class="nav-actions">
+    <a class="btn-glass" style="cursor:pointer;">Войти</a>
+    <a class="btn-glass btn-primary" style="cursor:pointer;" onclick="openPop()">Записаться</a>
+  </div>
+</header>
+
+<!-- ═══ PAGE: ГЛАВНАЯ ═══ -->
+<div id="page-home" class="page active">
+  <section class="hero">
+    <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+    <div class="hg"></div>
+    <div class="a1 harc"></div><div class="a2 harc"></div><div class="a3 harc"></div>
+    <div class="hc">
+      <div class="hbg"><div class="bd"></div>Образование нового поколения</div>
+      <h1 class="ht">Прокачай себя<span class="la">вместе с городом</span></h1>
+      <p class="hs">Образовательные программы для молодёжи от <strong>16 до 30 лет</strong>. Практические навыки, сильное комьюнити и реальные возможности в твоём городе.</p>
+      <div class="hcta">
+        <a class="btn-glass btn-primary" style="padding:14px 32px;font-size:15px;cursor:pointer;" onclick="openPop()">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2v14M2 9h14" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Начать обучение
+        </a>
+        <a href="#" class="btn-glass" style="padding:14px 28px;font-size:15px;" onclick="showPage('programs');return false;">
+          Все программы
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <div class="sw"><div class="hst">
+        <div class="sc"><div class="snum">12 000+</div><div class="slbl">выпускников</div></div>
+        <div class="sc"><div class="snum">47</div><div class="slbl">программ</div></div>
+        <div class="sc"><div class="snum">8 лет</div><div class="slbl">на рынке</div></div>
+        <div class="sc"><div class="snum">94%</div><div class="slbl">трудоустройство</div></div>
+      </div></div>
+    </div>
+    <div class="sh"><span>Листать</span><div class="sl2"></div></div>
+  </section>
+
+  <!-- HOME: Features -->
+  <div class="sb" style="padding-top:80px;">
+    <div style="text-align:center;margin-bottom:56px;">
+      <div class="pg-badge" style="margin:0 auto 16px;"><div class="bd"></div>Почему мы</div>
+      <h2 style="font-family:'Unbounded',sans-serif;font-size:clamp(26px,3.5vw,40px);font-weight:900;color:#fff;line-height:1.15;">Образование, которое <span style="background:linear-gradient(90deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">работает</span></h2>
+    </div>
+    <div class="cg" style="grid-template-columns:repeat(3,1fr);">
+      <div class="card">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11l5 5L18 6" stroke="url(#f1)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="f1" x1="4" y1="6" x2="18" y2="16"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <h3>100% практика</h3>
+        <p>С первого дня работаешь над реальными задачами. Никаких скучных лекций — только проекты, кейсы и живые разборы.</p>
+      </div>
+      <div class="card">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="8" cy="9" r="4" stroke="url(#f2)" stroke-width="1.7"/><circle cx="16" cy="13" r="3" stroke="url(#f2)" stroke-width="1.7"/><path d="M12 11c1.5 0 2.5.5 3 1" stroke="url(#f2)" stroke-width="1.4" stroke-linecap="round"/><defs><linearGradient id="f2" x1="4" y1="6" x2="19" y2="16"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <h3>Менторство 1-на-1</h3>
+        <p>Персональный наставник — практик из индустрии. Он помогает разобраться, двигаться вперёд и не потеряться.</p>
+      </div>
+      <div class="card">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3C7 3 4 6.1 4 10c0 2.4 1.2 4.6 3 5.9V19l4-2 4 2v-3.1c1.8-1.3 3-3.5 3-5.9 0-3.9-3.1-7-7-7z" stroke="url(#f3)" stroke-width="1.7" stroke-linejoin="round"/><defs><linearGradient id="f3" x1="4" y1="3" x2="18" y2="19"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <h3>Комьюнити 12 000+</h3>
+        <p>После выпуска ты остаёшься в сети. Бывшие студенты помогают с трудоустройством, стартапами и новыми идеями.</p>
+      </div>
+      <div class="card">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="4" width="16" height="14" rx="2" stroke="url(#f4)" stroke-width="1.7"/><path d="M7 9h8M7 13h5" stroke="url(#f4)" stroke-width="1.7" stroke-linecap="round"/><defs><linearGradient id="f4" x1="3" y1="4" x2="19" y2="18"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <h3>Сертификаты рынка</h3>
+        <p>Дипломы и сертификаты, которые знают работодатели. Партнёрские программы с ведущими компаниями города.</p>
+      </div>
+      <div class="card">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 17l5-5 4 4 5-6" stroke="url(#f5)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="6" r="2" stroke="url(#f5)" stroke-width="1.5"/><defs><linearGradient id="f5" x1="3" y1="6" x2="20" y2="17"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <h3>Карьерный трек</h3>
+        <p>Помогаем составить резюме, подготовиться к собеседованию и выйти на рынок. 94% выпускников находят работу.</p>
+      </div>
+      <div class="card">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 4v4M11 14v4M4 11h4M14 11h4" stroke="url(#f6)" stroke-width="1.8" stroke-linecap="round"/><defs><linearGradient id="f6" x1="4" y1="4" x2="18" y2="18"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <h3>Гибкий формат</h3>
+        <p>Онлайн, офлайн и гибридный формат. Учись там, где тебе удобно, и в том темпе, который подходит.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME: Programs teaser -->
+  <div class="div"></div>
+  <div class="sb">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:40px;">
+      <div>
+        <div class="pg-badge" style="margin-bottom:12px;"><div class="bd"></div>Направления</div>
+        <h2 style="font-family:'Unbounded',sans-serif;font-size:clamp(22px,3vw,34px);font-weight:900;color:#fff;line-height:1.2;">Популярные <span style="background:linear-gradient(90deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">программы</span></h2>
+      </div>
+      <a href="#" onclick="showPage('programs');return false;" class="btn-glass" style="white-space:nowrap;">Все программы →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      <div class="card" style="display:grid;grid-template-rows:1fr auto;">
+        <div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div class="ci" style="margin:0;width:42px;height:42px;"><svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M6 8l-4 3 4 3M16 8l4 3-4 3M13 5l-4 12" stroke="url(#hp1)" stroke-width="1.8" stroke-linecap="round"/><defs><linearGradient id="hp1" x1="2" y1="5" x2="20" y2="17" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+            <span style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--av);">IT и разработка</span>
+          </div>
+          <h3 style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;">Веб-разработка с нуля</h3>
+          <p style="font-size:13px;color:var(--tm);line-height:1.65;">HTML, CSS, JavaScript, React. Реальные проекты и портфолио.</p>
+        </div>
+        <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;color:var(--td);">6 мес · онлайн</span>
+          <a style="font-size:12px;font-weight:600;color:var(--av);display:flex;align-items:center;gap:4px;text-decoration:none;cursor:pointer;" onclick="openPop();">Записаться →</a>
+        </div>
+      </div>
+      <div class="card" style="display:grid;grid-template-rows:1fr auto;">
+        <div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div class="ci" style="margin:0;width:42px;height:42px;"><svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M11 2l2.5 6H20l-5.5 4 2 6.5L11 15l-5.5 3.5 2-6.5L2 8h6.5L11 2z" stroke="url(#hp2)" stroke-width="1.7" stroke-linejoin="round"/><defs><linearGradient id="hp2" x1="2" y1="2" x2="20" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+            <span style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--av);">Бизнес</span>
+          </div>
+          <h3 style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;">Предпринимательство</h3>
+          <p style="font-size:13px;color:var(--tm);line-height:1.65;">От идеи до MVP и первых продаж. Менторство от действующих предпринимателей.</p>
+        </div>
+        <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;color:var(--td);">5 мес · офлайн</span>
+          <a style="font-size:12px;font-weight:600;color:var(--av);display:flex;align-items:center;gap:4px;text-decoration:none;cursor:pointer;" onclick="openPop();">Записаться →</a>
+        </div>
+      </div>
+      <div class="card" style="display:grid;grid-template-rows:1fr auto;">
+        <div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div class="ci" style="margin:0;width:42px;height:42px;"><svg width="20" height="20" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="url(#hp3)" stroke-width="1.7"/><path d="M8 11c0-1.7 1.3-3 3-3s3 1.3 3 3-1.3 3-3 3" stroke="url(#hp3)" stroke-width="1.7" stroke-linecap="round"/><defs><linearGradient id="hp3" x1="3" y1="3" x2="19" y2="19" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+            <span style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--av);">Креатив</span>
+          </div>
+          <h3 style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;">UX/UI Дизайн</h3>
+          <p style="font-size:13px;color:var(--tm);line-height:1.65;">Figma, исследования, прототипирование, дизайн-системы. Создашь приложение для портфолио.</p>
+        </div>
+        <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;color:var(--td);">5 мес · гибрид</span>
+          <a style="font-size:12px;font-weight:600;color:var(--av);display:flex;align-items:center;gap:4px;text-decoration:none;cursor:pointer;" onclick="openPop();">Записаться →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME: Testimonials -->
+  <div class="div"></div>
+  <div class="sb">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div class="pg-badge" style="margin:0 auto 16px;"><div class="bd"></div>Выпускники</div>
+      <h2 style="font-family:'Unbounded',sans-serif;font-size:clamp(22px,3vw,34px);font-weight:900;color:#fff;line-height:1.2;">Истории <span style="background:linear-gradient(90deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">успеха</span></h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+          <div class="ta" style="width:52px;height:52px;background:linear-gradient(135deg,#a259ff,#4f8fff);font-size:16px;flex-shrink:0;">КМ</div>
+          <div><div style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;color:#fff;">Катя Михайлова</div><div style="font-size:12px;color:var(--tm);margin-top:2px;">Выпускница UX/UI, 2023</div></div>
+        </div>
+        <p style="font-size:14px;color:var(--tm);line-height:1.75;font-style:italic;">«После курса по дизайну я получила оффер в ТехноХаб ещё до выпуска. Сейчас веду продуктовые интерфейсы для 200 000 пользователей. Импульс изменил всё.»</p>
+        <div style="margin-top:16px;display:flex;gap:4px;">
+          <span style="color:#a259ff;font-size:16px;">★★★★★</span>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+          <div class="ta" style="width:52px;height:52px;background:linear-gradient(135deg,#7b6dff,#a259ff);font-size:16px;flex-shrink:0;">АГ</div>
+          <div><div style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;color:#fff;">Артём Голубев</div><div style="font-size:12px;color:var(--tm);margin-top:2px;">Выпускник Веб-разработки, 2022</div></div>
+        </div>
+        <p style="font-size:14px;color:var(--tm);line-height:1.75;font-style:italic;">«Пришёл без опыта, ушёл с портфолио и работой. За 6 месяцев я написал три живых проекта — это и стало моим резюме. Сейчас middle-разработчик в стартапе.»</p>
+        <div style="margin-top:16px;display:flex;gap:4px;">
+          <span style="color:#a259ff;font-size:16px;">★★★★★</span>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+          <div class="ta" style="width:52px;height:52px;background:linear-gradient(135deg,#4f8fff,#7b6dff);font-size:16px;flex-shrink:0;">НП</div>
+          <div><div style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;color:#fff;">Настя Петрова</div><div style="font-size:12px;color:var(--tm);margin-top:2px;">Выпускница Предпринимательства, 2024</div></div>
+        </div>
+        <p style="font-size:14px;color:var(--tm);line-height:1.75;font-style:italic;">«Курс дал не только знания, но и команду. С двумя одногруппниками мы запустили сервис доставки еды. Уже 8 месяцев работаем, первые инвестиции привлечены.»</p>
+        <div style="margin-top:16px;display:flex;gap:4px;">
+          <span style="color:#a259ff;font-size:16px;">★★★★★</span>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;">
+      <a href="#" onclick="showPage('blog');return false;" class="btn-glass" style="padding:12px 28px;">Читать все истории →</a>
+    </div>
+  </div>
+
+  <!-- HOME: CTA Banner -->
+  <div class="sb" style="padding-top:0;">
+    <div style="border-radius:28px;padding:64px 56px;background:linear-gradient(135deg,rgba(162,89,255,.12),rgba(79,143,255,.07));border:1px solid rgba(162,89,255,.22);text-align:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;width:400px;height:400px;border-radius:50%;top:-150px;right:-100px;background:radial-gradient(circle,rgba(162,89,255,.18),transparent 70%);filter:blur(60px);pointer-events:none;"></div>
+      <div style="position:absolute;width:300px;height:300px;border-radius:50%;bottom:-100px;left:-80px;background:radial-gradient(circle,rgba(79,143,255,.14),transparent 70%);filter:blur(50px);pointer-events:none;"></div>
+      <div style="position:relative;z-index:1;">
+        <div class="pg-badge" style="margin:0 auto 20px;"><div class="bd"></div>Старт уже скоро</div>
+        <h2 style="font-family:'Unbounded',sans-serif;font-size:clamp(24px,3.5vw,42px);font-weight:900;color:#fff;line-height:1.15;margin-bottom:16px;">Готов сделать следующий шаг?</h2>
+        <p style="font-size:17px;color:var(--tm);max-width:520px;margin:0 auto 36px;line-height:1.7;">Оставь заявку — мы подберём программу под твои цели и свяжемся в течение одного рабочего дня.</p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a class="btn-glass btn-primary" style="padding:15px 36px;font-size:15px;cursor:pointer;" onclick="openPop()">Записаться на программу</a>
+          <a href="#" class="btn-glass" style="padding:15px 28px;font-size:15px;" onclick="showPage('events');return false;">Посетить открытый день</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="fl">ИМПУЛЬС ГОРОДА</div>
+    <p>© 2024 Импульс Города. Все права защищены.</p>
+    <nav><button onclick="showPage('home')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Главная</button><button onclick="showPage('programs')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Программы</button><button onclick="showPage('about')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">О нас</button><button onclick="showPage('partners')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Партнёры</button><button onclick="showPage('events')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">События</button><button onclick="showPage('blog')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Блог</button></nav>
+  </footer>
+</div>
+
+<!-- ═══ PAGE: ПРОГРАММЫ ═══ -->
+<div id="page-programs" class="page">
+  <div class="page-hero">
+    <div class="page-hero-grid"></div>
+    <div class="pho pho1"></div><div class="pho pho2"></div>
+    <div class="phc">
+      <div class="pg-badge"><div class="bd"></div>Направления</div>
+      <h1 class="pg-title">Наши <span class="gr">программы</span></h1>
+      <p class="pg-desc">47 курсов и треков для старта и развития карьеры. Онлайн, офлайн и гибридный формат — выбери своё направление.</p>
+    </div>
+  </div>
+  <div class="sb">
+    <div class="fb">
+      <button class="fbt active" onclick="filt(this,'all')">Все направления</button>
+      <button class="fbt" onclick="filt(this,'tech')">IT и технологии</button>
+      <button class="fbt" onclick="filt(this,'biz')">Бизнес</button>
+      <button class="fbt" onclick="filt(this,'cre')">Креатив</button>
+      <button class="fbt" onclick="filt(this,'soc')">Социальное</button>
+    </div>
+    <div class="cg" id="pg">
+      <div class="card" data-c="tech">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M6 8l-4 3 4 3M16 8l4 3-4 3M13 5l-4 12" stroke="url(#cg1)" stroke-width="1.8" stroke-linecap="round"/><defs><linearGradient id="cg1" x1="2" y1="5" x2="20" y2="17" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <div class="ct">IT и разработка</div><h3>Веб-разработка с нуля</h3>
+        <p>HTML, CSS, JavaScript, React. Реальные проекты и портфолио под руководством практикующих разработчиков.</p>
+        <div class="cf"><span class="cd">6 мес · онлайн</span><a class="cb" style="cursor:pointer;" onclick="openPop();">Записаться →</a></div>
+      </div>
+      <div class="card" data-c="tech">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 17l5-5 4 4 7-8" stroke="url(#cg2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="cg2" x1="3" y1="9" x2="19" y2="17" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <div class="ct">IT и разработка</div><h3>Data Science и ИИ</h3>
+        <p>Python, машинное обучение, нейросети. От основ статистики до deployment реальных ML-моделей.</p>
+        <div class="cf"><span class="cd">8 мес · гибрид</span><a class="cb" style="cursor:pointer;" onclick="openPop();">Записаться →</a></div>
+      </div>
+      <div class="card" data-c="tech">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3v4M11 15v4M3 11h4M15 11h4" stroke="url(#cg3)" stroke-width="1.8" stroke-linecap="round"/><circle cx="11" cy="11" r="3" stroke="url(#cg3)" stroke-width="1.7"/><defs><linearGradient id="cg3" x1="3" y1="3" x2="19" y2="19" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <div class="ct">IT и разработка</div><h3>Кибербезопасность</h3>
+        <p>Основы информационной безопасности, этичный хакинг, защита систем. Актуальная профессия с высоким спросом.</p>
+        <div class="cf"><span class="cd">6 мес · гибрид</span><a class="cb" style="cursor:pointer;" onclick="openPop();">Записаться →</a></div>
+      </div>
+      <div class="card" data-c="biz">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2l2.5 6H20l-5.5 4 2 6.5L11 15l-5.5 3.5 2-6.5L2 8h6.5L11 2z" stroke="url(#cg4)" stroke-width="1.7" stroke-linejoin="round"/><defs><linearGradient id="cg4" x1="2" y1="2" x2="20" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <div class="ct">Бизнес</div><h3>Предпринимательство</h3>
+        <p>От идеи до MVP и первых продаж. Менторство от действующих предпринимателей и инвестиционные сессии.</p>
+        <div class="cf"><span class="cd">5 мес · офлайн</span><a class="cb" style="cursor:pointer;" onclick="openPop();">Записаться →</a></div>
+      </div>
+      <div class="card" data-c="biz">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 6h14M4 11h9M4 16h6" stroke="url(#cg5)" stroke-width="1.8" stroke-linecap="round"/><defs><linearGradient id="cg5" x1="4" y1="6" x2="18" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <div class="ct">Бизнес</div><h3>Digital-маркетинг</h3>
+        <p>SMM, таргет, контент-маркетинг, аналитика. Запустишь первые рекламные кампании в процессе учёбы.</p>
+        <div class="cf"><span class="cd">4 мес · онлайн</span><a class="cb" style="cursor:pointer;" onclick="openPop();">Записаться →</a></div>
+      </div>
+      <div class="card" data-c="biz">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="8" r="4" stroke="url(#cg6)" stroke-width="1.7"/><path d="M4 20c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="url(#cg6)" stroke-width="1.7" stroke-linecap="round"/><defs><linearGradient id="cg6" x1="4" y1="4" x2="18" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <div class="ct">Бизнес</div><h3>Лидерство и управление</h3>
+        <p>Soft skills, управление командой, переговоры, публичные выступления. Программа для тех, кто хочет вести за собой.</p>
+        <div class="cf"><span class="cd">3 мес · офлайн</span><a class="cb" style="cursor:pointer;" onclick="openPop();">Записаться →</a></div>
+      </div>
+      <div class="card" data-c="cre">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="url(#cg7)" stroke-width="1.7"/><path d="M8 11c0-1.7 1.3-3 3-3s3 1.3 3 3-1.3 3-3 3" stroke="url(#cg7)" stroke-width="1.7" stroke-linecap="round"/><defs><linearGradient id="cg7" x1="3" y1="3" x2="19" y2="19" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <div class="ct">Креатив</div><h3>UX/UI Дизайн</h3>
+        <p>Figma, исследования, прототипирование, дизайн-системы. Создашь полноценное приложение для портфолио.</p>
+        <div class="cf"><span class="cd">5 мес · гибрид</span><a class="cb" style="cursor:pointer;" onclick="openPop();">Записаться →</a></div>
+      </div>
+      <div class="card" data-c="cre">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="5" width="16" height="12" rx="2" stroke="url(#cg8)" stroke-width="1.7"/><path d="M8 9l3 3 3-3" stroke="url(#cg8)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="cg8" x1="3" y1="5" x2="19" y2="17" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <div class="ct">Креатив</div><h3>Видео и медиапроизводство</h3>
+        <p>Съёмка, монтаж, сторителлинг, работа со звуком. Выпустишь собственный медиапроект к концу курса.</p>
+        <div class="cf"><span class="cd">4 мес · офлайн</span><a class="cb" style="cursor:pointer;" onclick="openPop();">Записаться →</a></div>
+      </div>
+      <div class="card" data-c="soc">
+        <div class="ci"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3C7 3 4 6 4 10c0 2.5 1.2 4.7 3 6.1V19l3-1.5 1 .5 1-.5L15 19v-2.9c1.8-1.4 3-3.6 3-6.1 0-4-3-7-7-7z" stroke="url(#cg9)" stroke-width="1.7" stroke-linejoin="round"/><defs><linearGradient id="cg9" x1="4" y1="3" x2="18" y2="19" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+        <div class="ct">Социальное</div><h3>Городские проекты</h3>
+        <p>Как создать и реализовать проект для города. Работа с администрацией, фандрайзинг и социальное предпринимательство.</p>
+        <div class="cf"><span class="cd">3 мес · офлайн</span><a class="cb" style="cursor:pointer;" onclick="openPop();">Записаться →</a></div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="fl">ИМПУЛЬС ГОРОДА</div>
+    <p>© 2024 Импульс Города. Все права защищены.</p>
+    <nav><button onclick="showPage('blog')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Блог</button></nav>
+  </footer>
+</div>
+
+<!-- ═══ PAGE: О НАС ═══ -->
+<div id="page-about" class="page">
+  <div class="page-hero">
+    <div class="page-hero-grid"></div>
+    <div class="pho pho1"></div><div class="pho pho2"></div>
+    <div class="phc">
+      <div class="pg-badge"><div class="bd"></div>Наша история</div>
+      <h1 class="pg-title">Мы создаём <span class="gr">будущее</span></h1>
+      <p class="pg-desc">С 2016 года мы помогаем молодым людям находить своё место в городе, профессии и жизни.</p>
+    </div>
+  </div>
+  <div class="sb">
+    <div class="ag">
+      <div>
+        <div class="av-box">
+          <div class="av-orb"></div>
+          <div class="av-inner"><div class="av-num">8+</div><div class="av-lbl">лет меняем жизни</div></div>
+        </div>
+      </div>
+      <div class="at">
+        <h2>Образование как <span>импульс</span> к действию</h2>
+        <p>«Импульс Города» — это не просто учебный центр. Это живое комьюнити практиков, наставников и выпускников, которые верят: знания меняются только тогда, когда применяются на практике.</p>
+        <p>Мы начинали с одного курса по предпринимательству в маленьком коворкинге. Сегодня — 47 программ, 12 000+ выпускников и партнёрства с ведущими компаниями города.</p>
+        <div class="vl">
+          <div class="vi"><div class="vd"></div><div><h4>Практика с первого дня</h4><p>Никакой сухой теории. Каждый урок — задача из реального мира.</p></div></div>
+          <div class="vi"><div class="vd"></div><div><h4>Наставники-практики</h4><p>Все преподаватели — действующие специалисты в своих областях.</p></div></div>
+          <div class="vi"><div class="vd"></div><div><h4>Комьюнити на всю жизнь</h4><p>После выпуска ты остаёшься частью сети в 12 000+ человек.</p></div></div>
+          <div class="vi"><div class="vd"></div><div><h4>Доступность и инклюзия</h4><p>Гранты, рассрочки и бесплатные треки для тех, кто в этом нуждается.</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="div" style="margin:60px 0;"></div>
+    <div class="sr">
+      <div class="sm"><div class="sn">12 000+</div><div class="sl">выпускников</div></div>
+      <div class="sm"><div class="sn">47</div><div class="sl">программ</div></div>
+      <div class="sm"><div class="sn">120+</div><div class="sl">партнёров</div></div>
+      <div class="sm"><div class="sn">94%</div><div class="sl">трудоустройство</div></div>
+    </div>
+    <h2 style="font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;">Команда</h2>
+    <p style="font-size:14px;color:var(--tm);margin-bottom:0;">Люди, которые делают это возможным каждый день.</p>
+    <div class="tg">
+      <div class="tc"><div class="ta" style="background:linear-gradient(135deg,#a259ff,#4f8fff);">АМ</div><h4>Алина Морозова</h4><span>Директор и основатель</span></div>
+      <div class="tc"><div class="ta" style="background:linear-gradient(135deg,#7b6dff,#a259ff);">ДК</div><h4>Дмитрий Кузнецов</h4><span>Методист, IT-треки</span></div>
+      <div class="tc"><div class="ta" style="background:linear-gradient(135deg,#4f8fff,#7b6dff);">ЕС</div><h4>Елена Соколова</h4><span>Куратор программ</span></div>
+      <div class="tc"><div class="ta" style="background:linear-gradient(135deg,#a259ff,#7b6dff);">ИВ</div><h4>Игорь Васильев</h4><span>Партнёрства и развитие</span></div>
+    </div>
+  </div>
+  <footer>
+    <div class="fl">ИМПУЛЬС ГОРОДА</div>
+    <p>© 2024 Импульс Города. Все права защищены.</p>
+    <nav><button onclick="showPage('home')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Главная</button><button onclick="showPage('programs')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Программы</button><button onclick="showPage('about')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">О нас</button><button onclick="showPage('partners')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Партнёры</button><button onclick="showPage('events')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">События</button><button onclick="showPage('blog')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Блог</button></nav>
+  </footer>
+</div>
+
+<div id="page-partners" class="page">
+  <div class="page-hero">
+    <div class="page-hero-grid"></div>
+    <div class="pho pho1"></div><div class="pho pho2"></div>
+    <div class="phc">
+      <div class="pg-badge"><div class="bd"></div>Экосистема</div>
+      <h1 class="pg-title">Наши <span class="gr">партнёры</span></h1>
+      <p class="pg-desc">120+ компаний и организаций, которые доверяют нашим выпускникам и участвуют в создании программ.</p>
+    </div>
+  </div>
+  <div class="sb">
+    <div style="margin-bottom:16px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--td);">Корпоративные партнёры</div>
+    <div class="pg">
+      <div class="pc"><div class="plw"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="4" width="9" height="9" rx="2" fill="url(#pp1)"/><rect x="15" y="4" width="9" height="9" rx="2" fill="url(#pp1)" opacity=".6"/><rect x="4" y="15" width="9" height="9" rx="2" fill="url(#pp1)" opacity=".6"/><rect x="15" y="15" width="9" height="9" rx="2" fill="url(#pp1)" opacity=".3"/><defs><linearGradient id="pp1" x1="4" y1="4" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div><div><div class="pn">ТехноХаб</div><div class="pt">IT-компания</div></div></div>
+      <div class="pc"><div class="plw"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="9" stroke="url(#pp2)" stroke-width="2"/><path d="M10 14h8M14 10v8" stroke="url(#pp2)" stroke-width="1.8" stroke-linecap="round"/><defs><linearGradient id="pp2" x1="5" y1="5" x2="23" y2="23" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div><div><div class="pn">ГородМедиа</div><div class="pt">Медиахолдинг</div></div></div>
+      <div class="pc"><div class="plw"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 5L22 9v10L14 23 6 19V9L14 5z" stroke="url(#pp3)" stroke-width="1.8" stroke-linejoin="round"/><defs><linearGradient id="pp3" x1="6" y1="5" x2="22" y2="23" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div><div><div class="pn">СтройГрупп</div><div class="pt">Девелопмент</div></div></div>
+      <div class="pc"><div class="plw"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M5 20l4-8 5 6 3-4 6 6" stroke="url(#pp4)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="pp4" x1="5" y1="12" x2="23" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div><div><div class="pn">АналитикаПро</div><div class="pt">Данные и аналитика</div></div></div>
+      <div class="pc"><div class="plw"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="10" r="5" stroke="url(#pp5)" stroke-width="1.8"/><circle cx="20" cy="18" r="4" stroke="url(#pp5)" stroke-width="1.8"/><path d="M14 12l4 4" stroke="url(#pp5)" stroke-width="1.5" stroke-linecap="round"/><defs><linearGradient id="pp5" x1="5" y1="5" x2="24" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#7b6dff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div><div><div class="pn">СвязьТелеком</div><div class="pt">Телекоммуникации</div></div></div>
+      <div class="pc"><div class="plw"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M7 21V12l7-7 7 7v9H17v-5h-4v5H7z" stroke="url(#pp6)" stroke-width="1.8" stroke-linejoin="round"/><defs><linearGradient id="pp6" x1="7" y1="5" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div><div><div class="pn">УрбанФонд</div><div class="pt">Городское развитие</div></div></div>
+    </div>
+
+    <div style="margin:48px 0 16px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--td);">Государственные и образовательные</div>
+    <div class="pg">
+      <div class="pc"><div class="plw"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 4L4 9v2h20V9L14 4z" stroke="url(#pp7)" stroke-width="1.7" stroke-linejoin="round"/><rect x="6" y="11" width="3" height="10" rx="1" fill="url(#pp7)" opacity=".6"/><rect x="12.5" y="11" width="3" height="10" rx="1" fill="url(#pp7)"/><rect x="19" y="11" width="3" height="10" rx="1" fill="url(#pp7)" opacity=".6"/><rect x="4" y="21" width="20" height="2" rx="1" fill="url(#pp7)"/><defs><linearGradient id="pp7" x1="4" y1="4" x2="24" y2="23" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div><div><div class="pn">Городской университет</div><div class="pt">Высшее образование</div></div></div>
+      <div class="pc"><div class="plw"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="10" r="5" stroke="url(#pp8)" stroke-width="1.8"/><path d="M6 23c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="url(#pp8)" stroke-width="1.8" stroke-linecap="round"/><defs><linearGradient id="pp8" x1="6" y1="5" x2="22" y2="23" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div><div><div class="pn">Комитет молодёжи</div><div class="pt">Городская администрация</div></div></div>
+      <div class="pc"><div class="plw"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M5 8h18M5 14h12M5 20h8" stroke="url(#pp9)" stroke-width="1.8" stroke-linecap="round"/><defs><linearGradient id="pp9" x1="5" y1="8" x2="23" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div><div><div class="pn">Молодёжный фонд</div><div class="pt">НКО и гранты</div></div></div>
+    </div>
+
+    <div class="pcta">
+      <h3>Стань партнёром</h3>
+      <p>Мы открыты к сотрудничеству с компаниями, фондами и организациями, которые хотят инвестировать в молодёжь.</p>
+      <a href="#" class="btn-glass btn-primary" style="padding:13px 28px;" onclick="openPop();return false;">Обсудить партнёрство</a>
+    </div>
+  </div>
+  <footer>
+    <div class="fl">ИМПУЛЬС ГОРОДА</div>
+    <p>© 2024 Импульс Города. Все права защищены.</p>
+    <nav><button onclick="showPage('blog')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Блог</button></nav>
+  </footer>
+</div>
+
+<!-- ═══ PAGE: СОБЫТИЯ ═══ -->
+<div id="page-events" class="page">
+  <div class="page-hero">
+    <div class="page-hero-grid"></div>
+    <div class="pho pho1"></div><div class="pho pho2"></div>
+    <div class="phc">
+      <div class="pg-badge"><div class="bd"></div>Афиша</div>
+      <h1 class="pg-title">Ближайшие <span class="gr">события</span></h1>
+      <p class="pg-desc">Воркшопы, хакатоны, лекции и нетворкинги — всё, что происходит в нашем комьюнити прямо сейчас.</p>
+    </div>
+  </div>
+  <div class="sb">
+    <div class="fb">
+      <button class="fbt active">Все</button>
+      <button class="fbt">Воркшопы</button>
+      <button class="fbt">Лекции</button>
+      <button class="fbt">Хакатоны</button>
+      <button class="fbt">Нетворкинг</button>
+    </div>
+    <div class="el">
+      <div class="ec">
+        <div class="ed"><div class="eday">15</div><div class="emon">Июн</div></div>
+        <div class="ei"><h3>Хакатон «Город будущего»</h3><p>48-часовой марафон идей для улучшения городской среды. Призовой фонд — 500 000 ₽. Регистрация открыта.</p><div class="em"><span class="etag">Хакатон</span><span class="etag b">Офлайн · 48 ч</span><span class="etag">Призы</span></div></div>
+        <div class="ea"><a href="#" class="btn-glass btn-primary" style="padding:10px 20px;font-size:13px;" onclick="openPop();return false;">Участвовать</a></div>
+      </div>
+      <div class="ec">
+        <div class="ed"><div class="eday">20</div><div class="emon">Июн</div></div>
+        <div class="ei"><h3>Воркшоп: Figma для начинающих</h3><p>Практический воркшоп по UX/UI дизайну. За 3 часа создашь свой первый макет мобильного приложения.</p><div class="em"><span class="etag">Воркшоп</span><span class="etag b">Онлайн · 3 ч</span></div></div>
+        <div class="ea"><a href="#" class="btn-glass" style="padding:10px 20px;font-size:13px;" onclick="openPop();return false;">Записаться</a></div>
+      </div>
+      <div class="ec">
+        <div class="ed"><div class="eday">25</div><div class="emon">Июн</div></div>
+        <div class="ei"><h3>Лекция: «Как найти работу в IT без опыта»</h3><p>Спикер — Денис Громов, Head of Recruitment в ТехноХаб. Разберём реальные кейсы и дадим работающие стратегии.</p><div class="em"><span class="etag">Лекция</span><span class="etag b">Офлайн · 2 ч</span><span class="etag">Бесплатно</span></div></div>
+        <div class="ea"><a href="#" class="btn-glass" style="padding:10px 20px;font-size:13px;" onclick="openPop();return false;">Зарегистрироваться</a></div>
+      </div>
+      <div class="ec">
+        <div class="ed"><div class="eday">02</div><div class="emon">Июл</div></div>
+        <div class="ei"><h3>Нетворкинг «Импульс Meet»</h3><p>Ежемесячная встреча комьюнити: студенты, выпускники и партнёры. Неформальное общение и питчи проектов.</p><div class="em"><span class="etag">Нетворкинг</span><span class="etag b">Офлайн · Вечер</span></div></div>
+        <div class="ea"><a href="#" class="btn-glass" style="padding:10px 20px;font-size:13px;" onclick="openPop();return false;">Прийти</a></div>
+      </div>
+      <div class="ec">
+        <div class="ed"><div class="eday">10</div><div class="emon">Июл</div></div>
+        <div class="ei"><h3>Интенсив по Python за выходные</h3><p>Два дня — с нуля до автоматизации задач. Подходит для тех, кто хочет попробовать программирование без долгих курсов.</p><div class="em"><span class="etag">Воркшоп</span><span class="etag b">Гибрид · 2 дня</span></div></div>
+        <div class="ea"><a href="#" class="btn-glass" style="padding:10px 20px;font-size:13px;" onclick="openPop();return false;">Записаться</a></div>
+      </div>
+      <div class="ec">
+        <div class="ed"><div class="eday">18</div><div class="emon">Июл</div></div>
+        <div class="ei"><h3>День открытых дверей</h3><p>Познакомься с командой, задай вопросы преподавателям. Экскурсия по кампусу и живые выступления выпускников.</p><div class="em"><span class="etag">Открытый день</span><span class="etag b">Офлайн</span><span class="etag">Бесплатно</span></div></div>
+        <div class="ea"><a href="#" class="btn-glass btn-primary" style="padding:10px 20px;font-size:13px;" onclick="openPop();return false;">Прийти</a></div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="fl">ИМПУЛЬС ГОРОДА</div>
+    <p>© 2024 Импульс Города. Все права защищены.</p>
+    <nav><button onclick="showPage('blog')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">Блог</button></nav>
+  </footer>
+</div>
+
+<!-- ═══ PAGE: БЛОГ ═══ -->
+<div id="page-blog" class="page">
+  <div class="page-hero">
+    <div class="page-hero-grid"></div>
+    <div class="pho pho1"></div><div class="pho pho2"></div>
+    <div class="phc">
+      <div class="pg-badge"><div class="bd"></div>Истории</div>
+      <h1 class="pg-title">Блог и <span class="gr">истории выпускников</span></h1>
+      <p class="pg-desc">Реальные пути, честные мысли и вдохновляющие повороты судьбы наших студентов и команды.</p>
+    </div>
+  </div>
+  <div class="sb">
+
+    <!-- Filter bar -->
+    <div class="fb" style="margin-bottom:40px;">
+      <button class="fbt active" onclick="blogFilt(this,'all')">Все</button>
+      <button class="fbt" onclick="blogFilt(this,'story')">Истории выпускников</button>
+      <button class="fbt" onclick="blogFilt(this,'tips')">Советы</button>
+      <button class="fbt" onclick="blogFilt(this,'news')">Новости</button>
+    </div>
+
+    <!-- Featured post -->
+    <div class="card blog-card" data-bc="story" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:40px;margin-bottom:32px;border-color:rgba(162,89,255,.22);">
+      <div style="border-radius:16px;aspect-ratio:4/3;background:linear-gradient(135deg,rgba(162,89,255,.2),rgba(79,143,255,.12));display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid rgba(162,89,255,.18);">
+        <div style="position:absolute;width:200px;height:200px;border-radius:50%;top:-60px;right:-60px;background:radial-gradient(circle,rgba(162,89,255,.25),transparent 70%);filter:blur(40px);"></div>
+        <div style="text-align:center;position:relative;z-index:1;">
+          <div style="font-family:'Unbounded',sans-serif;font-size:56px;font-weight:900;background:linear-gradient(135deg,var(--av),var(--ab));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;">💡</div>
+          <div style="font-size:13px;color:var(--tm);margin-top:8px;">История выпускника</div>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+          <span class="etag">История выпускника</span>
+          <span class="etag b">10 мин чтения</span>
+        </div>
+        <h2 style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:12px;">«Я пришёл без опыта. Вышел с оффером от ТехноХаб»</h2>
+        <p style="font-size:14px;color:var(--tm);line-height:1.75;margin-bottom:20px;">Артём Голубев рассказывает, как за 6 месяцев курса по веб-разработке он собрал портфолио, прошёл 4 собеседования и выбрал лучший из трёх офферов. Без связей и без профильного образования.</p>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+          <div class="ta" style="width:36px;height:36px;background:linear-gradient(135deg,#a259ff,#4f8fff);font-size:11px;flex-shrink:0;">АГ</div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--tx);">Артём Голубев</div><div style="font-size:12px;color:var(--td);">15 мая 2024</div></div>
+        </div>
+        <a href="#" onclick="return false;" class="btn-glass btn-primary" style="padding:10px 22px;font-size:13px;">Читать историю →</a>
+      </div>
+    </div>
+
+    <!-- Post grid -->
+    <div id="blog-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+
+      <div class="card blog-card" data-bc="story">
+        <div style="border-radius:12px;height:160px;background:linear-gradient(135deg,rgba(162,89,255,.15),rgba(79,143,255,.08));display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:36px;">🚀</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><span class="etag">История выпускника</span><span class="etag b">7 мин</span></div>
+        <h3 style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;line-height:1.35;">Как Настя запустила стартап прямо во время курса по предпринимательству</h3>
+        <p style="font-size:13px;color:var(--tm);line-height:1.65;margin-bottom:16px;">Сервис доставки, первые 50 клиентов и партнёр из группы — история, которая началась с курсового проекта.</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;"><div class="ta" style="width:30px;height:30px;background:linear-gradient(135deg,#4f8fff,#7b6dff);font-size:10px;">НП</div><span style="font-size:12px;color:var(--td);">Настя Петрова · 2 апр</span></div>
+          <a href="#" onclick="return false;" style="font-size:12px;font-weight:600;color:var(--av);text-decoration:none;">Читать →</a>
+        </div>
+      </div>
+
+      <div class="card blog-card" data-bc="tips">
+        <div style="border-radius:12px;height:160px;background:linear-gradient(135deg,rgba(79,143,255,.15),rgba(123,109,255,.08));display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:36px;">📋</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><span class="etag">Советы</span><span class="etag b">5 мин</span></div>
+        <h3 style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;line-height:1.35;">10 вещей, которые стоит знать перед первым собеседованием в IT</h3>
+        <p style="font-size:13px;color:var(--tm);line-height:1.65;margin-bottom:16px;">Наш карьерный советник Дмитрий Кузнецов делится реальным чеклистом для джунов.</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;"><div class="ta" style="width:30px;height:30px;background:linear-gradient(135deg,#7b6dff,#a259ff);font-size:10px;">ДК</div><span style="font-size:12px;color:var(--td);">Дмитрий К. · 18 мар</span></div>
+          <a href="#" onclick="return false;" style="font-size:12px;font-weight:600;color:var(--av);text-decoration:none;">Читать →</a>
+        </div>
+      </div>
+
+      <div class="card blog-card" data-bc="news">
+        <div style="border-radius:12px;height:160px;background:linear-gradient(135deg,rgba(123,109,255,.15),rgba(162,89,255,.08));display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:36px;">🏆</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><span class="etag">Новости</span><span class="etag b">3 мин</span></div>
+        <h3 style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;line-height:1.35;">Наши студенты взяли первое место на Хакатоне «Город будущего»</h3>
+        <p style="font-size:13px;color:var(--tm);line-height:1.65;margin-bottom:16px;">Команда из трёх выпускников разработала приложение для умного светофора и победила среди 47 команд.</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;"><div class="ta" style="width:30px;height:30px;background:linear-gradient(135deg,#a259ff,#7b6dff);font-size:10px;">ИГ</div><span style="font-size:12px;color:var(--td);">Редакция · 10 мар</span></div>
+          <a href="#" onclick="return false;" style="font-size:12px;font-weight:600;color:var(--av);text-decoration:none;">Читать →</a>
+        </div>
+      </div>
+
+      <div class="card blog-card" data-bc="tips">
+        <div style="border-radius:12px;height:160px;background:linear-gradient(135deg,rgba(162,89,255,.12),rgba(79,143,255,.1));display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:36px;">🎨</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><span class="etag">Советы</span><span class="etag b">6 мин</span></div>
+        <h3 style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;line-height:1.35;">Как собрать портфолио дизайнера с нуля за 3 месяца</h3>
+        <p style="font-size:13px;color:var(--tm);line-height:1.65;margin-bottom:16px;">Пошаговый гайд от куратора UX/UI-программы: что включать, где публиковать, как получить обратную связь.</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;"><div class="ta" style="width:30px;height:30px;background:linear-gradient(135deg,#4f8fff,#a259ff);font-size:10px;">ЕС</div><span style="font-size:12px;color:var(--td);">Елена С. · 5 мар</span></div>
+          <a href="#" onclick="return false;" style="font-size:12px;font-weight:600;color:var(--av);text-decoration:none;">Читать →</a>
+        </div>
+      </div>
+
+      <div class="card blog-card" data-bc="story">
+        <div style="border-radius:12px;height:160px;background:linear-gradient(135deg,rgba(79,143,255,.13),rgba(162,89,255,.09));display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:36px;">🌆</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><span class="etag">История выпускника</span><span class="etag b">8 мин</span></div>
+        <h3 style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;line-height:1.35;">Из экономиста — в продакт-менеджера: история радикальной смены профессии</h3>
+        <p style="font-size:13px;color:var(--tm);line-height:1.65;margin-bottom:16px;">Иван работал в банке 4 года, но чувствовал, что занимается не своим делом. Курс «Лидерство и управление» стал точкой невозврата.</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;"><div class="ta" style="width:30px;height:30px;background:linear-gradient(135deg,#a259ff,#4f8fff);font-size:10px;">ИЛ</div><span style="font-size:12px;color:var(--td);">Иван Лебедев · 20 фев</span></div>
+          <a href="#" onclick="return false;" style="font-size:12px;font-weight:600;color:var(--av);text-decoration:none;">Читать →</a>
+        </div>
+      </div>
+
+      <div class="card blog-card" data-bc="news">
+        <div style="border-radius:12px;height:160px;background:linear-gradient(135deg,rgba(123,109,255,.13),rgba(79,143,255,.1));display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:36px;">📣</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><span class="etag">Новости</span><span class="etag b">2 мин</span></div>
+        <h3 style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;line-height:1.35;">«Импульс Города» запускает бесплатный трек для студентов из малых городов</h3>
+        <p style="font-size:13px;color:var(--tm);line-height:1.65;margin-bottom:16px;">При поддержке Молодёжного фонда 50 мест в полностью онлайн-программе для тех, кто находится за пределами мегаполиса.</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;"><div class="ta" style="width:30px;height:30px;background:linear-gradient(135deg,#7b6dff,#4f8fff);font-size:10px;">АМ</div><span style="font-size:12px;color:var(--td);">Алина М. · 8 фев</span></div>
+          <a href="#" onclick="return false;" style="font-size:12px;font-weight:600;color:var(--av);text-decoration:none;">Читать →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Newsletter CTA -->
+    <div style="margin-top:64px;border-radius:24px;padding:48px 40px;background:linear-gradient(135deg,rgba(162,89,255,.09),rgba(79,143,255,.06));border:1px solid rgba(162,89,255,.18);text-align:center;">
+      <h3 style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:10px;">Получай истории первым</h3>
+      <p style="font-size:14px;color:var(--tm);margin-bottom:28px;line-height:1.65;">Новые статьи, советы и анонсы событий — раз в неделю, без спама.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:440px;margin:0 auto;">
+        <input class="fi" type="email" placeholder="твой@email.ru" style="flex:1;min-width:220px;"/>
+        <button class="btn-glass btn-primary" onclick="this.textContent='Подписан! ✓';this.style.pointerEvents='none';" style="padding:13px 24px;border:none;cursor:pointer;white-space:nowrap;">Подписаться</button>
+      </div>
+    </div>
+
+  </div>
+  <footer>
+    <div class="fl">ИМПУЛЬС ГОРОДА</div>
+    <p>© 2024 Импульс Города. Все права защищены.</p>
+    <nav><button onclick="showPage('events')" style="background:none;border:none;font-family:'Mulish',sans-serif;font-size:12px;color:var(--tm);cursor:pointer;padding:4px 0;">События</button></nav>
+  </footer>
+</div>
+
+<!-- ═══ POPUP ═══ -->
+<div id="pop" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(7,6,15,.82);align-items:center;justify-content:center;padding:24px;box-sizing:border-box;">
+  <div id="pop-box" style="width:100%;max-width:460px;background:#110f22;border:1px solid rgba(162,89,255,.3);border-radius:24px;padding:40px 36px 36px;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 60px rgba(162,89,255,.15);box-sizing:border-box;max-height:90vh;overflow-y:auto;">
+    <button id="pop-close" style="position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(162,89,255,.25);background:rgba(255,255,255,.06);color:#9b96c0;cursor:pointer;font-size:18px;line-height:34px;text-align:center;padding:0;">✕</button>
+    <div id="pf">
+      <div style="display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:50px;background:rgba(162,89,255,.1);border:1px solid rgba(162,89,255,.22);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#a259ff;margin-bottom:18px;"><div class="bd"></div>Регистрация</div>
+      <h2 style="font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.25;">Начни своё обучение</h2>
+      <p style="font-size:14px;color:#9b96c0;margin-bottom:24px;line-height:1.6;">Заполни форму — мы свяжемся и подберём программу лично под тебя.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.06em;color:#9b96c0;text-transform:uppercase;margin-bottom:8px;">Имя</label><input class="fi" type="text" placeholder="Алекс" style="width:100%;"/></div>
+        <div><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.06em;color:#9b96c0;text-transform:uppercase;margin-bottom:8px;">Фамилия</label><input class="fi" type="text" placeholder="Смирнов" style="width:100%;"/></div>
+      </div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.06em;color:#9b96c0;text-transform:uppercase;margin-bottom:8px;">Email</label><input class="fi" type="email" placeholder="alex@mail.ru" style="width:100%;"/></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.06em;color:#9b96c0;text-transform:uppercase;margin-bottom:8px;">Телефон</label><input class="fi" type="tel" placeholder="+7 (___) ___-__-__" style="width:100%;"/></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.06em;color:#9b96c0;text-transform:uppercase;margin-bottom:8px;">Направление</label>
+        <select class="fs" style="width:100%;"><option value="" disabled selected>Выбери программу</option><option>Предпринимательство</option><option>Digital-маркетинг</option><option>IT и разработка</option><option>Дизайн и медиа</option><option>Лидерство и управление</option><option>Городские проекты</option></select>
+      </div>
+      <button id="submit-btn" style="width:100%;margin-top:8px;padding:15px;border-radius:12px;border:1px solid rgba(162,89,255,.5);background:linear-gradient(135deg,rgba(162,89,255,.7),rgba(79,143,255,.6));color:#fff;font-family:'Mulish',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 0 24px rgba(162,89,255,.3);">Отправить заявку →</button>
+      <p style="text-align:center;margin-top:14px;font-size:12px;color:#5c567a;">Нажимая кнопку, ты соглашаешься с политикой конфиденциальности</p>
+    </div>
+    <div id="ps" style="display:none;text-align:center;padding:20px 0 10px;">
+      <div style="width:64px;height:64px;border-radius:50%;margin:0 auto 20px;background:linear-gradient(135deg,rgba(162,89,255,.3),rgba(79,143,255,.2));border:1px solid rgba(162,89,255,.3);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(162,89,255,.25);"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M6 14.5L11.5 20L22 9" stroke="url(#sg)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="sg" x1="6" y1="9" x2="22" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#a259ff"/><stop offset="1" stop-color="#4f8fff"/></linearGradient></defs></svg></div>
+      <h3 style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:10px;">Заявка отправлена!</h3>
+      <p style="font-size:14px;color:#9b96c0;line-height:1.6;">Мы уже видим твою заявку и свяжемся с тобой в течение одного рабочего дня.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function openPop() {
+  var pop = document.getElementById('pop');
+  pop.style.cssText = 'display:flex;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(7,6,15,.82);align-items:center;justify-content:center;padding:24px;box-sizing:border-box;';
+  document.getElementById('pf').style.display = 'block';
+  document.getElementById('ps').style.display = 'none';
+}
+
+function closePop() {
+  document.getElementById('pop').style.cssText = 'display:none;';
+}
+
+document.getElementById('pop-close').addEventListener('click', closePop);
+
+document.getElementById('pop').addEventListener('click', function(e) {
+  if (e.target === this) closePop();
+});
+
+document.getElementById('submit-btn').addEventListener('click', function() {
+  document.getElementById('pf').style.display = 'none';
+  document.getElementById('ps').style.display = 'block';
+  setTimeout(function() {
+    closePop();
+  }, 2800);
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePop();
+});
+
+function blogFilt(btn,cat){
+  document.querySelectorAll('.fb .fbt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.blog-card').forEach(c=>{c.style.display=(cat==='all'||c.dataset.bc===cat)?'':'none';});
+}
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('#mn button').forEach(function(btn){
+    var isActive = btn.dataset.p === id;
+    btn.style.color = isActive ? '#f0eeff' : 'var(--tm, #9b96c0)';
+    btn.style.background = isActive ? 'rgba(162,89,255,.1)' : 'none';
+    btn.dataset.active = isActive ? '1' : '';
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function filt(btn,cat){
+  document.querySelectorAll('.fb .fbt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#pg .card').forEach(c=>{c.style.display=(cat==='all'||c.dataset.c===cat)?'':'none';});
+}
+</script>
+</body>
+</html>
